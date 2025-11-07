@@ -1,40 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Waste Classifier</title>
 
-    <!-- TensorFlow + Teachable Machine -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <!-- Teachable Machine + TensorFlow -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest"></script>
 
     <style>
       body {
         font-family: Arial, sans-serif;
         text-align: center;
-        padding: 20px;
       }
       #webcam-container {
         margin-top: 20px;
-      }
-      #label-container div {
-        margin-top: 5px;
       }
     </style>
   </head>
 
   <body>
     <h1>Waste Classifier</h1>
-
     <button onclick="init()">Start</button>
 
     <div id="webcam-container"></div>
     <div id="label-container"></div>
 
-    <script type="text/javascript">
-      /* ✅ IMPORTANT: Replace with your GitHub raw folder URL */
-      const URL = "https://YOUR_GITHUB_URL/raw/main/";
-
+    <script>
+      const URL = "./";
       let model, webcam, labelContainer, maxPredictions;
 
       async function init() {
@@ -45,12 +39,14 @@
         maxPredictions = model.getTotalClasses();
 
         const flip = true;
-        webcam = new tmImage.Webcam(300, 300, flip);
+        webcam = new tmImage.Webcam(200, 200, flip);
         await webcam.setup();
         await webcam.play();
         window.requestAnimationFrame(loop);
 
-        document.getElementById("webcam-container").appendChild(webcam.canvas);
+        document
+          .getElementById("webcam-container")
+          .appendChild(webcam.canvas);
 
         labelContainer = document.getElementById("label-container");
         for (let i = 0; i < maxPredictions; i++) {
@@ -66,13 +62,11 @@
 
       async function predict() {
         const prediction = await model.predict(webcam.canvas);
-
         for (let i = 0; i < maxPredictions; i++) {
-          const classPrediction =
+          labelContainer.childNodes[i].innerHTML =
             prediction[i].className +
             ": " +
             prediction[i].probability.toFixed(2);
-          labelContainer.childNodes[i].innerHTML = classPrediction;
         }
       }
     </script>
